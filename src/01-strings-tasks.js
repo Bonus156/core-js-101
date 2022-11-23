@@ -202,8 +202,20 @@ function extractEmails(str) {
  *             '└──────────┘\n'
  *
  */
-function getRectangleString(/* width, height */) {
-  throw new Error('Not implemented');
+function getRectangleString(width, height) {
+  let rectangle = '';
+  for (let row = 1; row <= height; row += 1) {
+    for (let col = 1; col <= width; col += 1) {
+      if (row === 1 && col === 1) rectangle += '┌';
+      else if (row === 1 && col === width) rectangle += '┐\n';
+      else if (row === height && col === 1) rectangle += '└';
+      else if (row === height && col === width) rectangle += '┘\n';
+      else if (col === 1) rectangle += '│';
+      else if (col === width) rectangle += '│\n';
+      else if (row === 1 || row === height) rectangle += '─';
+      else rectangle += ' ';
+    }
+  } return rectangle;
 }
 
 
@@ -223,8 +235,16 @@ function getRectangleString(/* width, height */) {
  *    => 'NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm'
  *
  */
-function encodeToRot13(/* str */) {
-  throw new Error('Not implemented');
+function encodeToRot13(str) {
+  let string = '';
+  for (let i = 0; i < str.length; i += 1) {
+    if (str.codePointAt(i) >= 65 && str.codePointAt(i) <= 90) {
+      string += String.fromCharCode((((str.charCodeAt(i) + 13) - 65) % 26) + 65);
+    } else if (str.codePointAt(i) >= 97 && str.codePointAt(i) <= 122) {
+      string += String.fromCharCode((((str.charCodeAt(i) + 13) - 97) % 26) + 97);
+    } else string += str[i];
+  }
+  return string;
 }
 
 /**
@@ -276,8 +296,12 @@ function isString(value) {
  *   'Q♠' => 50
  *   'K♠' => 51
  */
-function getCardId(/* value */) {
-  throw new Error('Not implemented');
+function getCardId(value) {
+  const suit = ['♣', '♦', '♥', '♠'];
+  const court = 'A234567891JQK';
+  const column = court.indexOf(value[0]);
+  const row = suit.indexOf(value[value.length - 1]);
+  return column + 13 * row;
 }
 
 
