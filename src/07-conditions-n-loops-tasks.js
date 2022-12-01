@@ -124,8 +124,11 @@ function isTriangle(a, b, c) {
  *   { top:20, left:20, width: 20, height: 20 }    =>  false
  *
  */
-function doRectanglesOverlap(/* rect1, rect2 */) {
-  throw new Error('Not implemented');
+function doRectanglesOverlap(rect1, rect2) {
+  if (rect1.top + rect1.height > rect2.top && rect1.left + rect1.width > rect2.left) {
+    if (rect2.top + rect2.height > rect1.top && rect2.left + rect2.width > rect1.left) return true;
+    return false;
+  } return false;
 }
 
 
@@ -155,8 +158,9 @@ function doRectanglesOverlap(/* rect1, rect2 */) {
  *   { center: { x:0, y:0 }, radius:10 },  { x:10, y:10 }   => false
  *
  */
-function isInsideCircle(/* circle, point */) {
-  throw new Error('Not implemented');
+function isInsideCircle(circle, point) {
+  return (Math.sqrt((circle.center.x - point.x) ** 2 + (circle.center.y - point.y) ** 2)
+  < circle.radius);
 }
 
 
@@ -265,8 +269,13 @@ function reverseInteger(num) {
  *   5436468789016589 => false
  *   4916123456789012 => false
  */
-function isCreditCardNumber(/* ccn */) {
-  throw new Error('Not implemented');
+function isCreditCardNumber(ccn) {
+  const arr = ccn.toString().split('').reverse();
+  for (let i = 1; i < arr.length; i += 2) {
+    arr[i] = +arr[i] * 2 > 9 ? +arr[i] * 2 - 9 : +arr[i] * 2;
+  }
+  const sumArr = arr.reduce((acc, el) => acc + +el, 0);
+  return (sumArr % 10 === 0);
 }
 
 /**
@@ -310,8 +319,22 @@ function getDigitalRoot(num) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
+function isBracketsBalanced(str) {
+  const brackets = new Map(Object.entries(
+    {
+      '[': ']',
+      '{': '}',
+      '(': ')',
+      '<': '>',
+    },
+  ));
+  const stack = [];
+  const arr = str.split('');
+  for (let i = 0; i < arr.length; i += 1) {
+    if (brackets.has(arr[i])) stack.push(arr[i]);
+    else if (arr[i] === brackets.get(stack[stack.length - 1])) stack.pop();
+    else return false;
+  } return (stack.length === 0);
 }
 
 
@@ -335,8 +358,16 @@ function isBracketsBalanced(/* str */) {
  *    365, 4  => '11231'
  *    365, 10 => '365'
  */
-function toNaryString(/* num, n */) {
-  throw new Error('Not implemented');
+function toNaryString(num, n) {
+  let reminder = num % n;
+  let quotient = (num - reminder) / n;
+  let string = reminder.toString();
+  while (quotient) {
+    reminder = quotient % n;
+    string = reminder + string;
+    quotient = (quotient - reminder) / n;
+  }
+  return Number(string);
 }
 
 
@@ -352,8 +383,18 @@ function toNaryString(/* num, n */) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  let letterNum = 0;
+  let path = '';
+  while (letterNum < pathes[0].length) {
+    for (let elem = 0; elem < pathes.length; elem += 1) {
+      if (pathes[elem][letterNum] !== pathes[0][letterNum]) {
+        path = pathes[0].slice(0, letterNum);
+        return path.indexOf('/') !== -1 ? path.slice(0, path.lastIndexOf('/') + 1) : '';
+      }
+    }
+    letterNum += 1;
+  } return '';
 }
 
 
@@ -375,8 +416,19 @@ function getCommonDirectoryPath(/* pathes */) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(m1, m2) {
+  const matrix = [];
+  let sum = 0;
+  for (let i = 0; i < m1.length; i += 1) {
+    matrix.push([]);
+    for (let j = 0; j < m1.length; j += 1) {
+      sum = 0;
+      for (let k = 0; k < m2.length; k += 1) {
+        sum += m1[i][k] * m2[k][j];
+      }
+      matrix[i].push(sum);
+    }
+  } return matrix;
 }
 
 
@@ -410,8 +462,24 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(position) {
+  const arr = [];
+  const column = [];
+  const diagonal = [];
+  const rightDiag = [];
+  for (let i = 0; i < position.length; i += 1) {
+    diagonal.push(position[i][i]);
+    rightDiag.push(position[i][position.length - i - 1]);
+    for (let j = 0; j < position[i].length; j += 1) {
+      arr.push(position[i][j]);
+      column.push(position[j][i]);
+    } if ((arr.length === 3 && arr.every((item) => item === 'X')) || (column.length === 3 && column.every((item) => item === 'X'))) return 'X';
+    if ((arr.length === 3 && arr.every((item) => item === '0')) || (column.length === 3 && column.every((item) => item === '0'))) return '0';
+    arr.length = 0;
+    column.length = 0;
+  } if (diagonal.every((item) => item === 'X') || rightDiag.every((item) => item === 'X')) return 'X';
+  if (diagonal.every((item) => item === '0') || rightDiag.every((item) => item === '0')) return '0';
+  return undefined;
 }
 
 
