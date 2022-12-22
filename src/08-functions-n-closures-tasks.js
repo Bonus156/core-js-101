@@ -23,8 +23,10 @@
  *   getComposition(Math.sin, Math.asin)(x) => Math.sin(Math.asin(x))
  *
  */
-function getComposition(/* f, g */) {
-  throw new Error('Not implemented');
+function getComposition(f, g) {
+  return function curry(x) {
+    return f(g(x));
+  };
 }
 
 
@@ -171,15 +173,10 @@ function logger(/* func, logFunc */) {
  *   partialUsingArguments(fn, 'a','b','c')('d') => 'abcd'
  *   partialUsingArguments(fn, 'a','b','c','d')() => 'abcd'
  */
-function partialUsingArguments(/* fn, ...args1 */) {
-  throw new Error('Not implemented');
-  // return function curried(args) {
-  //   if (args1.length >= fn.length) {
-  //     return fn.apply(this, args);
-  //   } return function curr(...args2) {
-  //     return curried.apply(this, args.concat(args2));
-  //   };
-  // };
+function partialUsingArguments(fn, ...args1) {
+  return function curried(...args) {
+    return fn.apply(this, args1.concat(args));
+  };
 }
 
 
